@@ -13,6 +13,7 @@ namespace test5
         public MainForm()
         {
             InitializeComponent();
+            KeyPreview = true;
             DoubleBuffered = true;
             BackColor = Color.Black;
             ClientSize = new System.Drawing.Size(1000, 700);
@@ -29,7 +30,6 @@ namespace test5
 
         private bool _usePerspective = true;
         private float _cameraZ = 5f;
-
 
         protected override void OnPaint(PaintEventArgs e)
         {
@@ -88,6 +88,51 @@ namespace test5
                 e.Graphics.DrawLine(pen, screen[a], screen[b]);
 
         }
+
+
+
+
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            base.OnKeyDown(e);
+            const float step = 0.1f;
+
+            switch (e.KeyCode)
+            { 
+                case Keys.A: _tx -= step; break;
+                case Keys.D: _tx += step; break;
+                case Keys.W: _ty += step; break;
+                case Keys.S: _ty -= step; break;
+                case Keys.Q: _cameraZ -= step; break;
+                case Keys.E: _cameraZ += step; break;
+
+                case Keys.J: _angleY -= 0.1f; break;
+                case Keys.L: _angleY += 0.1f; break;
+                case Keys.I: _angleX -= 0.1f; break;
+                case Keys.K: _angleX += 0.1f; break;
+
+                case Keys.Oemplus:
+                case Keys.Add: _scale *= 1.1f; break;
+                case Keys.OemMinus:
+                case Keys.Subtract: _scale /= 1.1f; break;
+
+                case Keys.P: _usePerspective = !_usePerspective; break;
+
+                case Keys.Space:
+                    _tx = _ty = 0; _angleX = _angleY = 0; _scale = 1f; _cameraZ = 5f;
+                    break;
+            }
+            Invalidate();
+
+
+        }
+
+
+
+
+
+
+        
 
 
 
