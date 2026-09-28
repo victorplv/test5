@@ -22,6 +22,11 @@ namespace test5
 
         private float _angleX = 0.4f;
         private float _angleY = 0.6f;
+
+
+        private float _tx = 0.3f, _ty = 0.0f, _tz = 0.0f;
+        private float _scale = 0.2f;
+
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
@@ -35,7 +40,11 @@ namespace test5
 
             const float k = 200f; // кол-во пикселей на единицу длины
 
-            Mat4 model = Mat4.RotationY(_angleY) * Mat4.RotationX(_angleX); // матрица модели, что делаем
+            Mat4 model =
+                Mat4.Translation(_tx, _ty, _tz)
+                * Mat4.RotationY(_angleY)
+                * Mat4.RotationX(_angleX)
+                * Mat4.Scale(_scale, _scale, _scale);
 
             // переход в 3d
             Mat4 proj = Mat4.Orthographic(-2f, 2f, -2f, 2f, 0.1f, 100f);

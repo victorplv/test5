@@ -79,6 +79,30 @@ public class Mat4
         return r;
     }
 
+
+    // перенос и масштабирование
+    public static Mat4 Translation (float x,  float y, float z)
+    {
+        var m = Identity();
+        m.M[0, 3] = x;
+        m.M[1, 3] = y;
+        m.M[2, 3] = z;
+        return m;
+    }
+
+    public static Mat4 Scale(float sx, float sy, float sz)
+    {
+        var m = Identity();
+        m.M[0,0] = sx;
+        m.M[1,1] = sy;
+        m.M[2,2] = sz;
+        return m;
+    }
+
+
+
+
+
     public Vector4 Transform(Vector4 v) => new Vector4(
         M[0, 0]* v.X + M[0, 1]* v.Y + M[0, 2]* v.Z + M[0, 3]* v.W,
         M[1, 0]* v.X + M[1, 1]* v.Y + M[1, 2]* v.Z + M[1, 3]* v.W,
