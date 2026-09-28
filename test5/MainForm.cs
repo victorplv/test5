@@ -20,12 +20,16 @@ namespace test5
 
         }
 
-        private float _angleX = 0.4f;
-        private float _angleY = 0.6f;
+        private float _angleX = 0.0f;
+        private float _angleY = 0.0f;
 
 
-        private float _tx = 0.3f, _ty = 0.0f, _tz = 0.0f;
-        private float _scale = 0.2f;
+        private float _tx = 0.0f, _ty = 0.0f, _tz = 0.0f;
+        private float _scale = 1.0f;
+
+        private bool _usePerspective = true;
+        private float _cameraZ = 5f;
+
 
         protected override void OnPaint(PaintEventArgs e)
         {
@@ -46,11 +50,18 @@ namespace test5
                 * Mat4.RotationX(_angleX)
                 * Mat4.Scale(_scale, _scale, _scale);
 
-            // переход в 3d
-            Mat4 proj = Mat4.Orthographic(-2f, 2f, -2f, 2f, 0.1f, 100f);
+
+
+            Mat4 view = Mat4.Translation(0, 0, -_cameraZ);
+
+            float aspect = (float)w / h;
+
+            Mat4 proj = _usePerspective 
+                ? Mat4.Perspective(MathF.PI / 3f, aspect, 0.1f, 100f)
+                : Mat4.Orthographic(-2f * aspect, 2f * aspect, -2f, 2f, 0.1f, 100f);
 
             // итоговая матрица
-            Mat4 mvp = proj * model;
+            Mat4 mvp = proj * view * model;
 
 
             var screen = new PointF[_obj.Vertices.Length];
@@ -58,13 +69,17 @@ namespace test5
             { 
                 var v = _obj.Vertices[i];
 
-                Vector4 t = model.Transform(new Vector4(v.X, v.Y, v.Z, 1f));
+                Vector4 t = mvp.Transform(new Vector4(v.X, v.Y, v.Z, 1f));
+                if (MathF.Abs(t.W) < 1e-6f) { screen[i] = new PointF(float.NaN, float.NaN); continue; }
+
+                float ndcX = t.X / t.W;
+                float ndcY = t.Y / t.W;
 
                 // w пока 1
                 screen[i] = new PointF
                     (
-                        cx+t.X * k, // Рястягиваем ndc в пиксели
-                        cy -t.Y * k // инвертирование y
+                        cx + ndcX * cx, // Рястягиваем ndc в пиксели
+                        cy - ndcY * cy // инвертирование y
                     );
             }
 

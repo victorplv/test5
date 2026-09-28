@@ -65,6 +65,21 @@ public class Mat4
 
     }
 
+
+    public static Mat4 Perspective(float fovY, float aspect, float near, float far)
+    {
+        var m = new Mat4();
+        float f = 1f / MathF.Tan(fovY / 2f);
+        m.M[0, 0] = f / aspect;
+        m.M[1, 1] = f;
+        m.M[2, 2] = (far + near) / (near - far);
+        m.M[2,3] = (2f * far *near)/(near - far);
+        m.M[3, 2] = -1f; 
+        return m;
+
+
+    }
+
     public static Mat4 operator *(Mat4 a, Mat4 b)
     {
         var r = new Mat4();
