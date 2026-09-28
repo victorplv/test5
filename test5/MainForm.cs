@@ -31,6 +31,12 @@ namespace test5
         private bool _usePerspective = true;
         private float _cameraZ = 5f;
 
+        // для мыши
+        private Point _lastMouse;
+        private bool _dragging;
+
+
+
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
@@ -125,14 +131,35 @@ namespace test5
             Invalidate();
 
 
+
+        }
+
+
+        protected override void OnMouseDown(MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left) 
+            { _dragging = true; _lastMouse = e.Location; }
+        }
+
+        protected override void OnMouseUp(MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left) _dragging = false;
+        }
+
+        protected override void OnMouseMove(MouseEventArgs e)
+        {
+            if (!_dragging) return;
+            float dx = e.X - _lastMouse.X;
+            float dy = e.Y - _lastMouse.Y;
+            _lastMouse = e.Location;
+
+            _angleY += dx * 0.01f;
+            _angleX += dy * 0.01f;
+            Invalidate();
         }
 
 
 
-
-
-
-        
 
 
 
