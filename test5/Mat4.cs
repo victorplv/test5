@@ -27,6 +27,44 @@ public class Mat4
 
     }
 
+    public static Mat4 RotationX(float angle)
+    {
+
+        var m = Identity();
+        float c = MathF.Cos(angle), s = MathF.Sin(angle);
+        m.M[1, 1] = c; m.M[1, 2] = -s;
+        m.M[2, 1] = s; m.M[2, 2] = c;
+        return m;
+
+    }
+
+    public static Mat4 RotationY(float angle)
+    {
+
+        var m = Identity();
+        float c = MathF.Cos(angle), s = MathF.Sin(angle);
+        m.M[0, 0] = c; m.M[0, 2] = s;
+        m.M[2, 0] = -s; m.M[2, 2] = c;
+        return m;
+
+    }
+
+
+    public static Mat4 Orthographic(float left, float right, float bottom, float top,
+                                    float near, float far)
+    {
+        var m = Identity();
+        m.M[0, 0] = 2f / (right - left);
+        m.M[1, 1] = 2f / (top - bottom);
+        m.M[2, 2] = -2f / (far - near);
+        m.M[0, 3] = -(right + left) / (right - left);
+        m.M[1, 3] = -(top + bottom) / (top - bottom);
+        m.M[2, 3] = -(far + near) / (far - near);
+        return m;
+
+
+    }
+
     public static Mat4 operator *(Mat4 a, Mat4 b)
     {
         var r = new Mat4();

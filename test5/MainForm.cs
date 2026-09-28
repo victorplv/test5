@@ -20,7 +20,8 @@ namespace test5
 
         }
 
-        private float _angleZ = 0.5f; // 28 градусов
+        private float _angleX = 0.4f;
+        private float _angleY = 0.6f;
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
@@ -34,7 +35,14 @@ namespace test5
 
             const float k = 200f; // кол-во пикселей на единицу длины
 
-            Mat4 model = Mat4.RotationZ(_angleZ); // матрица модели
+            Mat4 model = Mat4.RotationY(_angleY) * Mat4.RotationX(_angleX); // матрица модели, что делаем
+
+            // переход в 3d
+            Mat4 proj = Mat4.Orthographic(-2f, 2f, -2f, 2f, 0.1f, 100f);
+
+            // итоговая матрица
+            Mat4 mvp = proj * model;
+
 
             var screen = new PointF[_obj.Vertices.Length];
             for (int i = 0; i < _obj.Vertices.Length; i++)
@@ -43,7 +51,12 @@ namespace test5
 
                 Vector4 t = model.Transform(new Vector4(v.X, v.Y, v.Z, 1f));
 
-                screen[i] = new PointF(cx+t.X * k, cy -t.Y * k);
+                // w пока 1
+                screen[i] = new PointF
+                    (
+                        cx+t.X * k, // Рястягиваем ndc в пиксели
+                        cy -t.Y * k // инвертирование y
+                    );
             }
 
             using var pen = new Pen(Color.White, 1.5f);
