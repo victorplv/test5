@@ -68,6 +68,7 @@ namespace test5
 
             // итоговая матрица
             Mat4 mvp = proj * view * model;
+            DrawAxes(e.Graphics, mvp, w, h);
 
 
             var screen = new PointF[_obj.Vertices.Length];
@@ -93,6 +94,14 @@ namespace test5
             foreach (var (a, b) in _obj.Edges)
                 e.Graphics.DrawLine(pen, screen[a], screen[b]);
 
+
+            using var font = new Font("Consolas", 10);
+            string info =
+                $"Projection: {(_usePerspective ? "Перспективная" : "ортографическая")}\n" +
+                $"T = ({_tx:F2}, {_ty:F2})  Scale = {_scale:F2}  CamZ = {_cameraZ:F2}\n" +
+                $"RotX = {_angleX:F2}  RotY = {_angleY:F2}\n" +
+                $"WASD — сдвиг, QE — камера, IJKL — вращение, +/- — масштаб, P — проекция, Space — сброс";
+            e.Graphics.DrawString(info, font, Brushes.Lime, 10, 10);
         }
 
 
@@ -158,7 +167,32 @@ namespace test5
             Invalidate();
         }
 
+        private PointF? Project(Mat4 mvp, Vector3 v, int w, int h)
+        {
+            Vector4 t = mvp.Transform(new Vector4(v.X, v.Y, v.Z, 1f));
+            if (MathF.Abs(t.W) < 1e-6f) return null;
+            return new PointF(
+                w / 2f + (t.X / t.W) * (w / 2f),
+                h / 2f - (t.Y / t.W) * (h / 2f)
+            );
+        }
 
+        private void DrawAxes(Graphics g, Mat4 mvp, int w, int h)
+        {
+            var axes = new (Vector3 a, Vector3 b, Color c)[]
+            {
+        (new Vector3(0,0,0), new Vector3(2,0,0), Color.Red),
+        (new Vector3(0,0,0), new Vector3(0,2,0), Color.Green),
+        (new Vector3(0,0,0), new Vector3(0,0,2), Color.Blue),
+            };
+            foreach (var (a, b, c) in axes)
+            {
+                var pa = Project(mvp, a, w, h);
+                var pb = Project(mvp, b, w, h);
+                if (pa.HasValue && pb.HasValue)
+                    using (var pen = new Pen(c, 1f)) g.DrawLine(pen, pa.Value, pb.Value);
+            }
+        }
 
 
 
