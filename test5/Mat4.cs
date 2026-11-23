@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Numerics;
 
-
 namespace test5;
-
 
 public class Mat4
 {
     public float[,] M = new float[4, 4];
-
     public static Mat4 Identity()
     {
         var m = new Mat4();
@@ -49,7 +46,6 @@ public class Mat4
 
     }
 
-
     public static Mat4 Orthographic(float left, float right, float bottom, float top,
                                     float near, float far)
     {
@@ -64,7 +60,6 @@ public class Mat4
 
 
     }
-
 
     public static Mat4 Perspective(float fovY, float aspect, float near, float far)
     {
@@ -94,7 +89,6 @@ public class Mat4
         return r;
     }
 
-
     // перенос и масштабирование
     public static Mat4 Translation (float x,  float y, float z)
     {
@@ -113,11 +107,6 @@ public class Mat4
         m.M[2,2] = sz;
         return m;
     }
-
-
-
-
-
     public Vector4 Transform(Vector4 v) => new Vector4(
         M[0, 0]* v.X + M[0, 1]* v.Y + M[0, 2]* v.Z + M[0, 3]* v.W,
         M[1, 0]* v.X + M[1, 1]* v.Y + M[1, 2]* v.Z + M[1, 3]* v.W,
